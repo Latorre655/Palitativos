@@ -1,6 +1,8 @@
 package co.unab.johanyabi.proyectopalitativos
 
-import androidx.compose.foundation.Image
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,15 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,22 +33,38 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Brush
-
+import androidx.compose.ui.platform.LocalView
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.auth
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Preview
 @Composable
-fun LoginScreen(onClickRegister: ()-> Unit = {}) {
+fun LoginScreen(onClickRegister: ()-> Unit = {}, onSuccessfulLogin: () -> Unit = {}) {
+
+    val auth = Firebase.auth
+    val activity = LocalView.current.context as Activity
+    val context = LocalView.current.context
+    val scope = rememberCoroutineScope()
 
     //ESTADOS
     var inputEmail by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
+    var loginError by remember { mutableStateOf("") }
+    var backPressedOnce by remember { mutableStateOf(false) }
 
     val gradientBackground = Brush.verticalGradient(
         colors = listOf(
@@ -60,9 +73,25 @@ fun LoginScreen(onClickRegister: ()-> Unit = {}) {
         )
     )
 
+    BackHandler {
+        if (backPressedOnce) {
+            activity.finish()
+        } else {
+            backPressedOnce = true
+            Toast.makeText(context, "Presiona atrás de nuevo para salir", Toast.LENGTH_SHORT).show()
+
+            scope.launch {
+                delay(2000)
+                backPressedOnce = false
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .imePadding()
+            .verticalScroll(rememberScrollState())
             .background(gradientBackground)
             .systemBarsPadding(),
         contentAlignment = Alignment.Center
@@ -113,8 +142,10 @@ fun LoginScreen(onClickRegister: ()-> Unit = {}) {
                         )
                     },
                     textStyle = TextStyle(
-                        color = Color.White,
+                        color = Color.White
                     ),
+                    singleLine = true,
+                    maxLines = 1,
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF15161E),
@@ -139,6 +170,8 @@ fun LoginScreen(onClickRegister: ()-> Unit = {}) {
                     textStyle = TextStyle(
                         color = Color.White,
                     ),
+                    singleLine = true,
+                    maxLines = 1,
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF15161E),
@@ -146,8 +179,34 @@ fun LoginScreen(onClickRegister: ()-> Unit = {}) {
                     )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
+                if (loginError.isNotEmpty()){
+                    Text(
+                        loginError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        style = TextStyle(textAlign = TextAlign.Center)
+                    )
+                }
                 Button(
-                    onClick = {},
+                    onClick = {
+
+                        auth.signInWithEmailAndPassword(inputEmail, inputPassword)
+                            .addOnCompleteListener(activity) { task ->
+                                if (task.isSuccessful){
+                                    onSuccessfulLogin()
+                                }else{
+                                    loginError = when(task.exception){
+                                        is FirebaseAuthInvalidCredentialsException -> "Correo o contraseña incorrecta"
+                                        is FirebaseAuthInvalidUserException -> "No existe una cuenta con este correo"
+                                        else -> "Error al iniciar sesión. Intenta de nuevo"
+                                    }
+                                }
+                            }
+
+
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
