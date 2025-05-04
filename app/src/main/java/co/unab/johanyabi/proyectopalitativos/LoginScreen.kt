@@ -47,7 +47,7 @@ import androidx.compose.ui.graphics.Brush
 
 @Preview
 @Composable
-fun LoginScreen() {
+fun LoginScreen(onClickRegister: ()-> Unit = {}) {
 
     //ESTADOS
     var inputEmail by remember { mutableStateOf("") }
@@ -112,6 +112,9 @@ fun LoginScreen() {
                             fontWeight = FontWeight.Bold
                         )
                     },
+                    textStyle = TextStyle(
+                        color = Color.White,
+                    ),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF15161E),
@@ -133,6 +136,9 @@ fun LoginScreen() {
                             fontWeight = FontWeight.Bold
                         )
                     },
+                    textStyle = TextStyle(
+                        color = Color.White,
+                    ),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF15161E),
@@ -158,7 +164,7 @@ fun LoginScreen() {
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                TextButton(onClick = {}) {
+                TextButton(onClick = onClickRegister) {
                     val annotatedText = buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(color = Color.White, fontSize = 14.sp)

@@ -17,6 +17,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +39,7 @@ import androidx.compose.ui.unit.sp
 
 @Preview
 @Composable
-fun RegisterScreen(){
+fun RegisterScreen(onClickLogin: () -> Unit = {}){
 
     //ESTADOS
     var inputEmail by remember { mutableStateOf("") }
@@ -105,6 +106,9 @@ fun RegisterScreen(){
                             fontWeight = FontWeight.Bold
                         )
                     },
+                    textStyle = TextStyle(
+                        color = Color.White,
+                    ),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF15161E),
@@ -126,6 +130,9 @@ fun RegisterScreen(){
                             fontWeight = FontWeight.Bold
                         )
                     },
+                    textStyle = TextStyle(
+                        color = Color.White,
+                    ),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF15161E),
@@ -147,6 +154,9 @@ fun RegisterScreen(){
                             fontWeight = FontWeight.Bold
                         )
                     },
+                    textStyle = TextStyle(
+                        color = Color.White,
+                    ),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF15161E),
@@ -168,6 +178,9 @@ fun RegisterScreen(){
                             fontWeight = FontWeight.Bold
                         )
                     },
+                    textStyle = TextStyle(
+                        color = Color.White,
+                    ),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF15161E),
@@ -193,7 +206,7 @@ fun RegisterScreen(){
                     )
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                TextButton(onClick = {}) {
+                TextButton(onClick = onClickLogin) {
                     val annotatedText = buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(color = Color.White, fontSize = 14.sp)
