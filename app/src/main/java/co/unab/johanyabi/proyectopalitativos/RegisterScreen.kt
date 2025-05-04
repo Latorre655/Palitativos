@@ -1,5 +1,6 @@
 package co.unab.johanyabi.proyectopalitativos
 
+import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,9 +9,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
@@ -27,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,16 +41,31 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.auth
 
 @Preview
 @Composable
-fun RegisterScreen(onClickLogin: () -> Unit = {}){
+fun RegisterScreen(onClickLogin: () -> Unit = {}, onSuccessfulRegister: () -> Unit = {}){
+
+    val auth = Firebase.auth
+    val activity = LocalView.current.context as Activity
 
     //ESTADOS
     var inputEmail by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
     var inputName by remember { mutableStateOf("") }
     var inputPasswordConfirmation by remember { mutableStateOf("") }
+
+    var nameError by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
+    var confirmPasswordError by remember { mutableStateOf("") }
+
+    var registerError by remember { mutableStateOf("") }
 
     val gradientBackground = Brush.verticalGradient(
         colors = listOf(
@@ -57,6 +77,8 @@ fun RegisterScreen(onClickLogin: () -> Unit = {}){
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .imePadding()
+            .verticalScroll(rememberScrollState())
             .background(gradientBackground)
             .systemBarsPadding(),
         contentAlignment = Alignment.Center
@@ -115,6 +137,15 @@ fun RegisterScreen(onClickLogin: () -> Unit = {}){
                         unfocusedBorderColor = Color(0xFF15161E)
                     )
                 )
+                if (nameError.isNotEmpty()) {
+                    Text(
+                        text = nameError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(top = 12.dp),
+                        fontSize = 12.sp
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = inputEmail,
@@ -139,6 +170,15 @@ fun RegisterScreen(onClickLogin: () -> Unit = {}){
                         unfocusedBorderColor = Color(0xFF15161E)
                     )
                 )
+                if (emailError.isNotEmpty()) {
+                    Text(
+                        text = emailError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(top = 12.dp),
+                        fontSize = 12.sp
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = inputPassword,
@@ -163,6 +203,15 @@ fun RegisterScreen(onClickLogin: () -> Unit = {}){
                         unfocusedBorderColor = Color(0xFF15161E)
                     )
                 )
+                if (passwordError.isNotEmpty()) {
+                    Text(
+                        text = passwordError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(top = 12.dp),
+                        fontSize = 12.sp
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = inputPasswordConfirmation,
@@ -187,9 +236,54 @@ fun RegisterScreen(onClickLogin: () -> Unit = {}){
                         unfocusedBorderColor = Color(0xFF15161E)
                     )
                 )
+                if (confirmPasswordError.isNotEmpty()) {
+                    Text(
+                        text = confirmPasswordError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(top = 12.dp),
+                        fontSize = 12.sp
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
+                if (registerError.isNotEmpty()) {
+                    Text(
+                        registerError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 16.dp),
+                        style = TextStyle(textAlign = TextAlign.Center)
+                    )
+                }
                 Button(
-                    onClick = {},
+                    onClick = {
+
+                        val isValidName = validateName(inputName).first
+                        val isValidEmail = validateEmail(inputEmail).first
+                        val isValidPassword = validatePassword(inputPassword).first
+                        val isValidConfirmPassword = validateConfirmPassword(inputPassword, inputPasswordConfirmation).first
+
+                        nameError= validateName(inputName).second
+                        emailError = validateEmail(inputEmail).second
+                        passwordError = validatePassword(inputPassword).second
+                        confirmPasswordError = validateConfirmPassword(inputPassword, inputPasswordConfirmation).second
+
+                        if (isValidName && isValidEmail && isValidPassword && isValidConfirmPassword) {
+                            auth.createUserWithEmailAndPassword(inputEmail, inputPassword)
+                                .addOnCompleteListener(activity) { task ->
+                                    if (task.isSuccessful) {
+                                        onSuccessfulRegister()
+                                    } else {
+                                        registerError = when (task.exception) {
+                                            is FirebaseAuthInvalidCredentialsException -> "Correo invalido"
+                                            is FirebaseAuthUserCollisionException -> "Correo ya registrado"
+                                            else -> "Error al registrarse. Intenta de nuevo"
+                                        }
+                                    }
+                                }
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
