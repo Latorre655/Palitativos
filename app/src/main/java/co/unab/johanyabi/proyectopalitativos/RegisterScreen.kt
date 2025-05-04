@@ -1,6 +1,5 @@
 package co.unab.johanyabi.proyectopalitativos
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,48 +9,42 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-
-
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Preview
 @Composable
-fun LoginScreen() {
+fun RegisterScreen(){
 
     //ESTADOS
     var inputEmail by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
+    var inputName by remember { mutableStateOf("") }
+    var inputPasswordConfirmation by remember { mutableStateOf("") }
 
     val gradientBackground = Brush.verticalGradient(
         colors = listOf(
@@ -83,7 +76,7 @@ fun LoginScreen() {
                 verticalArrangement = Arrangement.Top
             ) {
                 Text(
-                    text = "Bienvenido",
+                    text = "Registro",
                     color = Color.White,
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Bold,
@@ -91,13 +84,34 @@ fun LoginScreen() {
                 )
                 Text(
                     modifier = Modifier.padding(top = 12.dp, start = 20.dp, end = 20.dp),
-                    text = "Llena la siguiente información para iniciar sesión",
+                    text = "Llena la siguiente información para poder registrarse",
                     color = Color(0xFFA9ADC6),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     style = TextStyle(textAlign = TextAlign.Center)
                 )
                 Spacer(modifier = Modifier.height(24.dp))
+                OutlinedTextField(
+                    value = inputName,
+                    onValueChange = {inputName = it},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF15161E), shape = RoundedCornerShape(12.dp)),
+                    label = {
+                        Text(
+                            "Nombre Completo",
+                            color = Color(0xFFA9ADC6),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF15161E),
+                        unfocusedBorderColor = Color(0xFF15161E)
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = inputEmail,
                     onValueChange = {inputEmail = it},
@@ -140,6 +154,27 @@ fun LoginScreen() {
                     )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = inputPasswordConfirmation,
+                    onValueChange = {inputPasswordConfirmation = it},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF15161E), shape = RoundedCornerShape(12.dp)),
+                    label = {
+                        Text(
+                            "Confirmar contraseña",
+                            color = Color(0xFFA9ADC6),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF15161E),
+                        unfocusedBorderColor = Color(0xFF15161E)
+                    )
+                )
+                Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = {},
                     modifier = Modifier
@@ -151,7 +186,7 @@ fun LoginScreen() {
                     )
                 ) {
                     Text(
-                        text = "Iniciar Sesión",
+                        text = "Registrarse",
                         fontSize = 16.sp,
                         color = Color.White,
                         fontWeight = FontWeight.Bold
@@ -163,12 +198,12 @@ fun LoginScreen() {
                         withStyle(
                             style = SpanStyle(color = Color.White, fontSize = 14.sp)
                         ) {
-                            append("¿No tienes una cuenta aún? ")
+                            append("¿Ya tienes una cuenta? ")
                         }
                         withStyle(
                             style = SpanStyle(color = Color(0xFF6F61EF), fontSize = 14.sp)
                         ) {
-                            append("Regístrate aquí")
+                            append("Inicia Sesión aquí")
                         }
                     }
                     Text(
