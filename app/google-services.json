@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1048348273236",
+    "project_id": "paliativos-7a7f9",
+    "storage_bucket": "paliativos-7a7f9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1048348273236:android:f228b56d0bbc0d99f39bc1",
+        "android_client_info": {
+          "package_name": "co.unab.johanyabi.proyectopalitativos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAh7QXSf4tgsrO9Umj8kBassVbFsuEn8Qw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
