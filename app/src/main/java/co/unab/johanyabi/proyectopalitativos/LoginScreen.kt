@@ -34,6 +34,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.getValue
@@ -43,6 +44,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
@@ -53,7 +57,7 @@ import kotlinx.coroutines.launch
 
 @Preview
 @Composable
-fun LoginScreen(onClickRegister: ()-> Unit = {}, onSuccessfulLogin: () -> Unit = {}) {
+fun LoginScreen(onClickRegister: () -> Unit = {}, onSuccessfulLogin: () -> Unit = {}) {
 
     val auth = Firebase.auth
     val activity = LocalView.current.context as Activity
@@ -64,6 +68,8 @@ fun LoginScreen(onClickRegister: ()-> Unit = {}, onSuccessfulLogin: () -> Unit =
     var inputEmail by remember { mutableStateOf("") }
     var inputPassword by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf("") }
+    var passwordError by remember { mutableStateOf("") }
     var backPressedOnce by remember { mutableStateOf(false) }
 
     val gradientBackground = Brush.verticalGradient(
@@ -129,7 +135,7 @@ fun LoginScreen(onClickRegister: ()-> Unit = {}, onSuccessfulLogin: () -> Unit =
                 Spacer(modifier = Modifier.height(24.dp))
                 OutlinedTextField(
                     value = inputEmail,
-                    onValueChange = {inputEmail = it},
+                    onValueChange = { inputEmail = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color(0xFF15161E), shape = RoundedCornerShape(12.dp)),
@@ -150,12 +156,26 @@ fun LoginScreen(onClickRegister: ()-> Unit = {}, onSuccessfulLogin: () -> Unit =
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF15161E),
                         unfocusedBorderColor = Color(0xFF15161E)
+                    ),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.None,
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Email
                     )
                 )
+                if (emailError.isNotEmpty()) {
+                    Text(
+                        text = emailError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(top = 12.dp),
+                        fontSize = 12.sp
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
                     value = inputPassword,
-                    onValueChange = {inputPassword = it},
+                    onValueChange = { inputPassword = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Color(0xFF15161E), shape = RoundedCornerShape(12.dp)),
@@ -176,10 +196,25 @@ fun LoginScreen(onClickRegister: ()-> Unit = {}, onSuccessfulLogin: () -> Unit =
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF15161E),
                         unfocusedBorderColor = Color(0xFF15161E)
+                    ),
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(
+                        capitalization = KeyboardCapitalization.None,
+                        autoCorrect = false,
+                        keyboardType = KeyboardType.Password
                     )
                 )
+                if (passwordError.isNotEmpty()) {
+                    Text(
+                        text = passwordError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(top = 12.dp),
+                        fontSize = 12.sp
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
-                if (loginError.isNotEmpty()){
+                if (loginError.isNotEmpty()) {
                     Text(
                         loginError,
                         color = Color.Red,
@@ -192,20 +227,27 @@ fun LoginScreen(onClickRegister: ()-> Unit = {}, onSuccessfulLogin: () -> Unit =
                 Button(
                     onClick = {
 
-                        auth.signInWithEmailAndPassword(inputEmail, inputPassword)
-                            .addOnCompleteListener(activity) { task ->
-                                if (task.isSuccessful){
-                                    onSuccessfulLogin()
-                                }else{
-                                    loginError = when(task.exception){
-                                        is FirebaseAuthInvalidCredentialsException -> "Correo o contraseña incorrecta"
-                                        is FirebaseAuthInvalidUserException -> "No existe una cuenta con este correo"
-                                        else -> "Error al iniciar sesión. Intenta de nuevo"
+                        val isValidEmail: Boolean = validateEmail(inputEmail).first
+                        val isValidPassword: Boolean = validatePassword(inputPassword).first
+                        emailError = validateEmail(inputEmail).second
+                        passwordError = validatePassword(inputPassword).second
+
+                        if (isValidEmail && isValidPassword) {
+                            auth.signInWithEmailAndPassword(inputEmail, inputPassword)
+                                .addOnCompleteListener(activity) { task ->
+                                    if (task.isSuccessful) {
+                                        onSuccessfulLogin()
+                                    } else {
+                                        loginError = when (task.exception) {
+                                            is FirebaseAuthInvalidCredentialsException -> "Correo o contraseña incorrecta"
+                                            is FirebaseAuthInvalidUserException -> "No existe una cuenta con este correo"
+                                            else -> "Error al iniciar sesión. Intenta de nuevo"
+                                        }
                                     }
                                 }
-                            }
+                        }else {
 
-
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
