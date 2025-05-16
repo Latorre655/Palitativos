@@ -38,6 +38,7 @@ fun HomeScreen(onClickLogout: () -> Unit = {}){
             ) {
                 Text("Cerrar Sesión", color = Color.White)
             }
+
         }
 
     }
