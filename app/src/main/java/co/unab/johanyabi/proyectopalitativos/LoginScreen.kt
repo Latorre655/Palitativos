@@ -1,9 +1,14 @@
 package co.unab.johanyabi.proyectopalitativos
 
 import android.app.Activity
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,27 +47,55 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-@Preview
 @Composable
-fun LoginScreen(onClickRegister: () -> Unit = {}, onSuccessfulLogin: () -> Unit = {}) {
+fun LoginScreen(
+    onClickRegister: () -> Unit = {}, onSuccessfulLogin: () -> Unit = {},
+    viewModel: LoginScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+) {
 
     val auth = Firebase.auth
     val activity = LocalView.current.context as Activity
     val context = LocalView.current.context
     val scope = rememberCoroutineScope()
+
+
+    val token = "1048348273236-2qs6tsjjngsjivabajor41bpg6g59sj2.apps.googleusercontent.com"
+    val context_google = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts
+            .StartActivityForResult()
+    ) {
+        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+            viewModel.singInWithGoogleCredential(credential) {
+                onSuccessfulLogin()
+            }
+        } catch (ex: Exception) {
+            Log.d("Mascota Feliz", "Google sign in failed")
+        }
+    }
 
     //ESTADOS
     var inputEmail by remember { mutableStateOf("") }
@@ -245,7 +278,7 @@ fun LoginScreen(onClickRegister: () -> Unit = {}, onSuccessfulLogin: () -> Unit 
                                         }
                                     }
                                 }
-                        }else {
+                        } else {
 
                         }
                     },
@@ -283,6 +316,39 @@ fun LoginScreen(onClickRegister: () -> Unit = {}, onSuccessfulLogin: () -> Unit 
                         modifier = Modifier
                             .padding(top = 16.dp, bottom = 16.dp)
                     )
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .clickable {
+                            val opciones = GoogleSignInOptions.Builder(
+                                GoogleSignInOptions.DEFAULT_SIGN_IN
+                            )
+                                .requestIdToken(token)
+                                .requestEmail()
+                                .build()
+                            val googleSignInClient =
+                                GoogleSignIn.getClient(context_google, opciones)
+                            launcher.launch(googleSignInClient.signInIntent)
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.google),
+                        contentDescription = "Google",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .padding(10.dp)
+                    )
+                    Text(
+                        text = "Login con Google",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+
+                        )
                 }
             }
         }
