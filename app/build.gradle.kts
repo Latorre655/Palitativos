@@ -71,4 +71,9 @@ dependencies {
     //Google
     implementation("com.google.android.gms:play-services-auth:20.7.0")
 
+    //Escaner
+    implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0-beta1")
+
+    //Guardar Escaneo
+    implementation("io.coil-kt:coil-compose:2.5.0")
 }
