@@ -22,7 +22,7 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanning
 import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 
 @Composable
-fun Escanear() {
+fun Escanear(onClickBack: () -> Unit = {}) {
     val context = LocalContext.current
     val activity = context as? Activity ?: return // seguridad contra crashes
     var scannedImageUri by remember { mutableStateOf<Uri?>(null) }

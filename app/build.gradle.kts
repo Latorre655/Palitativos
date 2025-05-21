@@ -58,26 +58,27 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation("com.google.firebase:firebase-firestore-ktx:24.11.1")
+
+    //firebase
+    implementation(platform(libs.firebase.bom))
+
+    implementation(libs.firebase.firestore.ktx)
 
     //Navegation Screens
     implementation(libs.androidx.navigation.compose)
-
-    //firebase
-    implementation(libs.firebase.bom)
 
     //Auth
     implementation(libs.firebase.auth)
 
     //Google
-    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation(libs.play.services.auth)
 
     //Escaner
-    implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0-beta1")
+    implementation(libs.play.services.mlkit.document.scanner)
 
     //Guardar Escaneo
-    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation(libs.coil.compose)
 
     //ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 }

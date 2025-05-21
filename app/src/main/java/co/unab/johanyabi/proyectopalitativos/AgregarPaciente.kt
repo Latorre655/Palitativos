@@ -1,6 +1,5 @@
 package co.unab.johanyabi.proyectopalitativos
 
-
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -32,12 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 
 data class Paciente(
     val nombre: String = "",
@@ -58,52 +53,56 @@ fun agregarPaciente(
 }
 
 @Composable
-fun EncabezadoConTitulo() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
-            .background(Color(0xFF3F315F))
-            .padding(horizontal = 16.dp, vertical = 16.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                Icons.Default.ArrowBack,
-                contentDescription = "Volver",
-                tint = Color.White,
-                modifier = Modifier
-                    .size(24.dp)
-                    .clickable {
-                        Log.d("Navegación", "Flecha presionada para volver atrás")
-                    }
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
-            Text(
-                text = "Añadir paciente nuevo",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun FormularioPaciente() {
+fun AgregarPacienteScreen(onClickBack: () -> Unit) {
+    // Estados para los campos
     var nombre by remember { mutableStateOf("") }
     var edad by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
+
+    // Estados para los mensajes de error
+    var nombreError by remember { mutableStateOf("") }
+    var edadError by remember { mutableStateOf("") }
+    var descripcionError by remember { mutableStateOf("") }
+
+    // Estado para errores generales
+    var formError by remember { mutableStateOf("") }
 
     Column(modifier = Modifier
         .fillMaxSize()
         .background(Color(0xFFE3EDF7)),
     ) {
-        EncabezadoConTitulo()
+        // Encabezado con flecha de navegación
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+                .background(Color(0xFF3F315F))
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Volver",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            onClickBack()
+                        }
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                Text(
+                    text = "Añadir paciente nuevo",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+        }
 
         Box(
             modifier = Modifier
@@ -118,45 +117,119 @@ fun FormularioPaciente() {
             ) {
                 OutlinedTextField(
                     value = nombre,
-                    onValueChange = { nombre = it },
+                    onValueChange = {
+                        nombre = it
+                        nombreError = ""  // Limpiar el error cuando el usuario escribe
+                    },
                     label = { Text("Nombre") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = nombreError.isNotEmpty()
                 )
+
+                if (nombreError.isNotEmpty()) {
+                    Text(
+                        text = nombreError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .fillMaxWidth(),
+                        fontSize = 12.sp
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = edad,
                     onValueChange = { newValue ->
-                        if (newValue.all { it.isDigit() }) edad = newValue
+                        if (newValue.all { it.isDigit() } || newValue.isEmpty()) {
+                            edad = newValue
+                            edadError = ""  // Limpiar el error cuando el usuario escribe
+                        }
                     },
                     label = { Text("Edad") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = edadError.isNotEmpty()
                 )
+
+                if (edadError.isNotEmpty()) {
+                    Text(
+                        text = edadError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .fillMaxWidth(),
+                        fontSize = 12.sp
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 OutlinedTextField(
                     value = descripcion,
-                    onValueChange = { descripcion = it },
+                    onValueChange = {
+                        descripcion = it
+                        descripcionError = ""  // Limpiar el error cuando el usuario escribe
+                    },
                     label = { Text("Descripción") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = descripcionError.isNotEmpty()
                 )
+
+                if (descripcionError.isNotEmpty()) {
+                    Text(
+                        text = descripcionError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .fillMaxWidth(),
+                        fontSize = 12.sp
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                if (formError.isNotEmpty()) {
+                    Text(
+                        text = formError,
+                        color = Color.Red,
+                        modifier = Modifier
+                            .padding(bottom = 16.dp)
+                            .fillMaxWidth(),
+                        fontSize = 14.sp
+                    )
+                }
+
                 Button(onClick = {
-                    val edadInt = edad.toIntOrNull() ?: 0
-                    if (edadInt in 1..100) {
+                    // Validar nombre
+                    val isValidName: Boolean = validateName(nombre).first
+                    nombreError = validateName(nombre).second
+
+                    // Validar edad
+                    val isValidAge: Boolean = validateAge(edad).first
+                    edadError = validateAge(edad).second
+
+                    // Validar descripción
+                    val isValidDesc: Boolean = validateDescription(descripcion).first
+                    descripcionError = validateDescription(descripcion).second
+
+                    // Si todas las validaciones son correctas, agregar paciente
+                    if (isValidName && isValidAge && isValidDesc) {
+                        val edadInt = edad.toIntOrNull() ?: 0
                         val paciente = Paciente(nombre, edadInt, descripcion)
                         agregarPaciente(
                             paciente,
-                            onSuccess = { Log.d("Firestore", "Paciente agregado correctamente") },
-                            onError = { e -> Log.e("Firestore", "Error: ${e.message}") }
+                            onSuccess = {
+                                Log.d("Firestore", "Paciente agregado correctamente")
+                                // Navegar de vuelta después de agregar
+                                onClickBack()
+                            },
+                            onError = { e ->
+                                Log.e("Firestore", "Error: ${e.message}")
+                                formError = "Error al agregar paciente: ${e.message}"
+                            }
                         )
-                    } else {
-                        Log.e("Validación", "Edad inválida. Debe estar entre 1 y 100.")
                     }
                 }) {
                     Text("Agregar Paciente")
@@ -165,4 +238,3 @@ fun FormularioPaciente() {
         }
     }
 }
-

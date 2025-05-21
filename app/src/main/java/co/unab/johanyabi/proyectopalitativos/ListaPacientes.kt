@@ -1,6 +1,7 @@
 package co.unab.johanyabi.proyectopalitativos
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun ListaPacientes(viewModel: PacienteViewModel = viewModel()) {
+fun ListaPacientes(
+    viewModel: PacienteViewModel = viewModel(),
+    onClickBack: () -> Unit = {},
+    onClickescala: () -> Unit = {}
+) {
 
     var textoBusqueda by remember { mutableStateOf("") }
 
@@ -46,6 +51,9 @@ fun ListaPacientes(viewModel: PacienteViewModel = viewModel()) {
                     Row(
                         modifier = Modifier
                             .padding(16.dp)
+                            .clickable {
+                                onClickescala()
+                            }
                     ) {
                         Text(text = paciente.nombre)
                     }
