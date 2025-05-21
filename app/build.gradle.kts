@@ -58,6 +58,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation("com.google.firebase:firebase-firestore-ktx:24.11.1")
 
     //Navegation Screens
     implementation(libs.androidx.navigation.compose)
@@ -76,4 +77,7 @@ dependencies {
 
     //Guardar Escaneo
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    //ViewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 }
