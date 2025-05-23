@@ -154,9 +154,9 @@ fun ListaPacientes(
         Spacer(modifier = Modifier.height(10.dp))
 
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 80.dp)
         ) {
-            items(pacientesFiltrados, key = { it.nombre ?: it.hashCode() }) { paciente ->
+            items(pacientesFiltrados) { paciente ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
