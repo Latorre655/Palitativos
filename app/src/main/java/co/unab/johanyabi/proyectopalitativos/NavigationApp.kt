@@ -7,25 +7,21 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
-/**
- * FUNCIÓN PRINCIPAL DE NAVEGACIÓN
- * Esta función configura toda la navegación de la aplicación usando Jetpack Compose Navigation
- */
 @Composable
 fun NavigationApp() {
 
-    // ✅ CREACIÓN DEL CONTROLADOR DE NAVEGACIÓN
+    //CREACIÓN DEL CONTROLADOR DE NAVEGACIÓN
     // rememberNavController() crea y mantiene el controlador durante recomposiciones
     val myNavController = rememberNavController()
 
-    // ✅ VARIABLE PARA DETERMINAR LA PANTALLA INICIAL
+    // VARIABLE PARA DETERMINAR LA PANTALLA INICIAL
     var myStartDestination: String = "login"
 
-    // ✅ CONFIGURACIÓN DE AUTENTICACIÓN CON FIREBASE
+    // CONFIGURACIÓN DE AUTENTICACIÓN CON FIREBASE
     val auth = Firebase.auth
     val currentUser = auth.currentUser
 
-    // ✅ LÓGICA DE PANTALLA INICIAL BASADA EN AUTENTICACIÓN
+    // LÓGICA DE PANTALLA INICIAL BASADA EN AUTENTICACIÓN
     // Si hay un usuario autenticado, ir directamente a home
     // Si no hay usuario, mostrar login
     if (currentUser != null) {
@@ -34,7 +30,7 @@ fun NavigationApp() {
         myStartDestination = "login"
     }
 
-    // ✅ CONFIGURACIÓN DEL HOST DE NAVEGACIÓN
+    // CONFIGURACIÓN DEL HOST DE NAVEGACIÓN
     // NavHost es el contenedor que maneja todas las rutas de la aplicación
     NavHost(
         navController = myNavController,
@@ -54,7 +50,7 @@ fun NavigationApp() {
                 // Callback para login exitoso
                 onSuccessfulLogin = {
                     myNavController.navigate("home") {
-                        // ✅ IMPORTANTE: popUpTo borra el login del stack
+                        // IMPORTANTE: popUpTo borra el login del stack
                         // inclusive = true incluye "login" en lo que se borra
                         // Esto evita que el usuario regrese al login con el botón atrás
                         popUpTo("login") { inclusive = true }
@@ -127,7 +123,7 @@ fun NavigationApp() {
                 onClickBack = {
                     myNavController.popBackStack()
                 },
-                // ✅ MÚLTIPLES ESCALAS MÉDICAS DISPONIBLES:
+                // MÚLTIPLES ESCALAS MÉDICAS DISPONIBLES:
                 onClickescaner = {
                     myNavController.navigate("escaner")
                 },

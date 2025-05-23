@@ -47,17 +47,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.auth
 
-/**
- * COMPOSABLE PRINCIPAL DE LA PANTALLA DE REGISTRO
- * Esta función crea toda la interfaz de usuario para el registro de nuevos usuarios
- *
- * IMPORTANTE: Esta pantalla maneja solo autenticación con email/password
- * No incluye Google Sign-In como la pantalla de login
- *
- * @param onClickLogin: Función que se ejecuta cuando el usuario quiere ir al login
- * @param onSuccessfulRegister: Función que se ejecuta cuando el registro es exitoso
- */
-@Preview // Permite ver la pantalla en el preview de Android Studio
 @Composable
 fun RegisterScreen(
     onClickLogin: () -> Unit = {},

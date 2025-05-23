@@ -64,14 +64,6 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/**
- * COMPOSABLE PRINCIPAL DE LA PANTALLA DE LOGIN
- * Esta función crea toda la interfaz de usuario para el inicio de sesión
- *
- * @param onClickRegister: Función que se ejecuta cuando el usuario quiere registrarse
- * @param onSuccessfulLogin: Función que se ejecuta cuando el login es exitoso
- * @param viewModel: ViewModel que maneja la lógica de negocio del login
- */
 @Composable
 fun LoginScreen(
     onClickRegister: () -> Unit = {},

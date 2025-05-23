@@ -49,15 +49,6 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/**
- * COMPOSABLE PRINCIPAL DE LA PANTALLA HOME
- *
- * Pantalla principal de la aplicación que muestra:
- * - Información del usuario autenticado
- * - Botones de navegación principales
- * - Panel de configuraciones
- * - Manejo personalizado del botón "atrás"
- */
 @Composable
 fun Home2(
     onClickLogout: () -> Unit = {},      // Callback para cerrar sesión
