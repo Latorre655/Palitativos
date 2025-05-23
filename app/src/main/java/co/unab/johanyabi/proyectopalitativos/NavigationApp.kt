@@ -67,7 +67,7 @@ fun NavigationApp() {
                 // Callback para registro exitoso
                 onSuccessfulRegister = {
                     myNavController.navigate("home") {
-                        // ✅ popUpTo(0) borra TODA la pila de navegación
+                        // popUpTo(0) borra TODA la pila de navegación
                         // Esto asegura que no se pueda regresar a pantallas de auth
                         popUpTo(0)
                     }

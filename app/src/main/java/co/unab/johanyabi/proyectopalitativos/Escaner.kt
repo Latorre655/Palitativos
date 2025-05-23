@@ -35,12 +35,15 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 @Composable
 fun Escanear(onClickBack: () -> Unit = {}) {
     val context = LocalContext.current
-    val activity = context as? Activity ?: return // seguridad contra crashes
-    var scannedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val activity = context as? Activity ?: return //Se asegura de que ese contexto es una Activity
+    var scannedImageUri by remember { mutableStateOf<Uri?>(null) } //Guarda la URI de la imagen escaneada, inicial null
 
+    //permite iniciar una actividad externa
     val scannerLauncher =
         rememberLauncherForActivityResult(StartIntentSenderForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
+
+                //almacenamiento del resultado del escaneo
                 val scanResult = GmsDocumentScanningResult.fromActivityResultIntent(result.data)
 
                 scanResult?.pages?.firstOrNull()?.let { page ->
@@ -90,9 +93,11 @@ fun Escanear(onClickBack: () -> Unit = {}) {
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                //Boton para escanear
                 Button(onClick = {
                     val options = GmsDocumentScannerOptions.Builder()
-                        .setGalleryImportAllowed(false)
+                        .setGalleryImportAllowed(true)
                         .setPageLimit(2)
                         .setResultFormats(RESULT_FORMAT_JPEG, RESULT_FORMAT_PDF)
                         .setScannerMode(SCANNER_MODE_FULL)
@@ -100,12 +105,15 @@ fun Escanear(onClickBack: () -> Unit = {}) {
 
                     val scanner = GmsDocumentScanning.getClient(options)
 
+                    //lanzar el escaner
                     scanner.getStartScanIntent(activity)
                         .addOnSuccessListener { intentSender ->
                             scannerLauncher.launch(
                                 IntentSenderRequest.Builder(intentSender).build()
                             )
                         }
+
+                        //si falla sale un aviso
                         .addOnFailureListener {
                             Toast.makeText(
                                 context,
@@ -119,7 +127,8 @@ fun Escanear(onClickBack: () -> Unit = {}) {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                scannedImageUri?.let { uri ->
+                //Mostrar la imagen escaneada
+                scannedImageUri?.let { uri -> //carga la imagen desde la URI de forma asincrónica.
                     Image(
                         painter = rememberAsyncImagePainter(uri),
                         contentDescription = "Documento escaneado",

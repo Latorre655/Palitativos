@@ -41,16 +41,22 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 data class Paciente(
     val nombre: String = "",
-    val edad: Int = 0,
+    val edad: Int = 0, // Valor por defecto 0 para evitar null
     val descripcion: String = ""
+
 )
 
+//agregar un paciente a Firebase Firestore
 fun agregarPaciente(
     paciente: Paciente,
     onSuccess: () -> Unit,
     onError: (Exception) -> Unit
 ) {
+
+    // Obtener instancia de Firestore
     val db = FirebaseFirestore.getInstance()
+
+    // Agregar documento a la colección "pacientes"
     db.collection("pacientes")
         .add(paciente)
         .addOnSuccessListener { onSuccess() }
@@ -80,7 +86,8 @@ fun AgregarPacienteScreen(onClickBack: () -> Unit) {
             .fillMaxSize()
             .background(Color(0xFFE3EDF7)),
     ) {
-        // Encabezado con flecha de navegación
+
+        //Scaffold proporciona estructura básica
         Scaffold(
             topBar = {
                 Row(
@@ -117,25 +124,27 @@ fun AgregarPacienteScreen(onClickBack: () -> Unit) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(innerPadding)
+                    .padding(innerPadding) //Respeta el padding del Scaffold
                     .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth(0.9f),
+                        .fillMaxWidth(0.9f), //90% del ancho disponible
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     OutlinedTextField(
                         value = nombre,
                         onValueChange = {
-                            nombre = it
+                            nombre = it //Actualiza el estado
                             nombreError = ""  // Limpiar el error cuando el usuario escribe
                         },
                         label = { Text("Nombre") },
                         modifier = Modifier.fillMaxWidth(),
                         isError = nombreError.isNotEmpty()
                     )
+
+                    //Mensaje de error si existe
 
                     if (nombreError.isNotEmpty()) {
                         Text(
@@ -153,13 +162,15 @@ fun AgregarPacienteScreen(onClickBack: () -> Unit) {
                     OutlinedTextField(
                         value = edad,
                         onValueChange = { newValue ->
+
+                            //Solo permite digitos
                             if (newValue.all { it.isDigit() } || newValue.isEmpty()) {
                                 edad = newValue
                                 edadError = ""  // Limpiar el error cuando el usuario escribe
                             }
                         },
                         label = { Text("Edad") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), //Teclado numerico
                         modifier = Modifier.fillMaxWidth(),
                         isError = edadError.isNotEmpty()
                     )
@@ -227,16 +238,20 @@ fun AgregarPacienteScreen(onClickBack: () -> Unit) {
 
                         // Si todas las validaciones son correctas, agregar paciente
                         if (isValidName && isValidAge && isValidDesc) {
+
+                            // Convertir edad de String a Int
                             val edadInt = edad.toIntOrNull() ?: 0
+
+                            //Crea objeto Paciente
                             val paciente = Paciente(nombre, edadInt, descripcion)
+
+                            //Llama a la funcion para guardar en la base de datos
                             agregarPaciente(
                                 paciente,
                                 onSuccess = {
-                                    Log.d("Firestore", "Paciente agregado correctamente")
                                     mostrarPopup = true
                                 },
                                 onError = { e ->
-                                    Log.e("Firestore", "Error: ${e.message}")
                                     formError = "Error al agregar paciente: ${e.message}"
                                 }
                             )
@@ -248,7 +263,7 @@ fun AgregarPacienteScreen(onClickBack: () -> Unit) {
 
                     if (mostrarPopup) {
                         AlertDialog(
-                            onDismissRequest = { mostrarPopup = false },
+                            onDismissRequest = { mostrarPopup = false }, //Al tocar afuera
                             title = { Text("Éxito") },
                             text = { Text("Paciente agregado correctamente.") },
                             confirmButton = {

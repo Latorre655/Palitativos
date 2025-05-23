@@ -134,8 +134,12 @@ fun CalcioCorregido(
                 // Botón calcular
                 Button(
                     onClick = {
+
+                        //convertir los textos a numeros
                         val calcio = calcioInput.toDoubleOrNull()
                         val albumina = albuminaInput.toDoubleOrNull()
+
+                        //si son validos se aplica la formula
                         if (calcio != null && albumina != null) {
                             resultado = calcio + 0.8 * (4 - albumina)
                         } else {
@@ -152,6 +156,8 @@ fun CalcioCorregido(
                 // Resultado
                 resultado?.let {
                     Text(
+
+                        //redondea el resultado a 2 decimales
                         text = "Resultado: %.2f".format(it),
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                         color = Color.Black,

@@ -42,12 +42,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 @Preview
 @Composable
 fun ListaPacientes(
+
+    //instancia del PacienteViewModel, donde estan pacientes cargados desde Firebase.
     viewModel: PacienteViewModel = viewModel(),
     onClickAtras: () -> Unit = {},
     onClickescala: () -> Unit = {}
 ) {
     var textoBusqueda by remember { mutableStateOf("") }
 
+    //filtra que solo deja los pacientes cuyo nombre contiene el texto escrito en textoBusqueda
     val pacientesFiltrados = viewModel.pacientes.filter {
         it.nombre?.contains(textoBusqueda, ignoreCase = true) == true
     }
@@ -102,6 +105,9 @@ fun ListaPacientes(
                     }
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Implementación personalizada de barra de búsqueda
+                    // Se usa Box para tener mayor control sobre el diseño y placeholder
+
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -122,6 +128,7 @@ fun ListaPacientes(
                                 modifier = Modifier.size(24.dp)
                             )
 
+                            // Placeholder personalizado
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -135,9 +142,11 @@ fun ListaPacientes(
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
+
+                                // Campo de texto básico (más personalizable que OutlinedTextField)
                                 BasicTextField(
                                     value = textoBusqueda,
-                                    onValueChange = { textoBusqueda = it },
+                                    onValueChange = { textoBusqueda = it }, //Actualiza
                                     modifier = Modifier.fillMaxWidth(),
                                     singleLine = true,
                                     textStyle = TextStyle(
@@ -153,9 +162,14 @@ fun ListaPacientes(
         }
         Spacer(modifier = Modifier.height(10.dp))
 
+        //LazyColumn: Lista virtual. Eficiente para listas grandes
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 80.dp)
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 80.dp)
         ) {
+
+            //toma una lista y renderiza cada paciente como un Card individual
             items(pacientesFiltrados) { paciente ->
                 Card(
                     modifier = Modifier
@@ -169,8 +183,10 @@ fun ListaPacientes(
                     Row(
                         modifier = Modifier.padding(16.dp)
                     ) {
+
+                        //Muestra el nombre del paciente
                         Text(
-                            text = paciente.nombre ?: "Sin nombre",
+                            text = paciente.nombre ?: "Sin nombre", //Null safety
                             fontSize = 16.sp,
                             color = Color.Black
                         )
