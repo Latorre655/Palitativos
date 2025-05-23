@@ -70,7 +70,8 @@ fun CalcioCorregido(
                     color = Color.White,
                     fontSize = 18.sp,
                     modifier = Modifier.weight(1f),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
                 )
             }
         },

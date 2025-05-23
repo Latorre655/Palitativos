@@ -40,7 +40,7 @@ fun PantallaEscalas(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(150.dp)
                 .background(Color(0xFF3A3457))
         ) {
             Row(
@@ -61,12 +61,18 @@ fun PantallaEscalas(
                         modifier = Modifier.size(28.dp)
                     )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 80.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ){
                 Text(
-                    text = "Pacientes",
+                    text = "ESCALAS",
                     color = Color.White,
-                    fontSize = 22.sp,
+                    fontSize = 24.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -78,7 +84,7 @@ fun PantallaEscalas(
                 .fillMaxHeight()
                 .background(Color(0xFFE3EDF7))
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(23.dp)
         ) {
             // Fila 1: KARFNOSKY y ECOG
             Row(

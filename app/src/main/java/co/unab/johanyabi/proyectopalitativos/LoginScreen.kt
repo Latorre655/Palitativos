@@ -66,7 +66,6 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun LoginScreen(
     onClickRegister: () -> Unit = {}, onSuccessfulLogin: () -> Unit = {},
@@ -78,12 +77,19 @@ fun LoginScreen(
     val context = LocalView.current.context
     val scope = rememberCoroutineScope()
 
-
     val token = "1048348273236-2qs6tsjjngsjivabajor41bpg6g59sj2.apps.googleusercontent.com"
     val context_google = LocalContext.current
+
+    // Configurar las opciones de Google Sign-In
+    val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestIdToken(token)
+        .requestEmail()
+        .build()
+
+    val googleSignInClient = GoogleSignIn.getClient(context_google, googleSignInOptions)
+
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts
-            .StartActivityForResult()
+        contract = ActivityResultContracts.StartActivityForResult()
     ) {
         val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
         try {
@@ -93,7 +99,7 @@ fun LoginScreen(
                 onSuccessfulLogin()
             }
         } catch (ex: Exception) {
-            Log.d("Mascota Feliz", "Google sign in failed")
+            Log.d("Mascota Feliz", "Google sign in failed: ${ex.message}")
         }
     }
 
@@ -314,24 +320,22 @@ fun LoginScreen(
                     Text(
                         text = annotatedText,
                         modifier = Modifier
-                            .padding(top = 16.dp, bottom = 16.dp)
+                            .padding(top = 16.dp, bottom = 12.dp)
                     )
                 }
+
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(10.dp)
                         .clip(RoundedCornerShape(10.dp))
+                        .background(Color.White)
                         .clickable {
-                            val opciones = GoogleSignInOptions.Builder(
-                                GoogleSignInOptions.DEFAULT_SIGN_IN
-                            )
-                                .requestIdToken(token)
-                                .requestEmail()
-                                .build()
-                            val googleSignInClient =
-                                GoogleSignIn.getClient(context_google, opciones)
-                            launcher.launch(googleSignInClient.signInIntent)
+                            // IMPORTANTE: Cerrar sesión antes de iniciar una nueva
+                            googleSignInClient.signOut().addOnCompleteListener {
+                                // Después de cerrar sesión, iniciar el intent de Google Sign-In
+                                launcher.launch(googleSignInClient.signInIntent)
+                            }
                         },
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -344,11 +348,12 @@ fun LoginScreen(
                             .padding(10.dp)
                     )
                     Text(
-                        text = "Login con Google",
+                        text = "Continuar con Google",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-
-                        )
+                        modifier = Modifier
+                            .padding(end=10.dp)
+                    )
                 }
             }
         }
