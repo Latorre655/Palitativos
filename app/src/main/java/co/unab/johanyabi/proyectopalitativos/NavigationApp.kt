@@ -1,5 +1,6 @@
 package co.unab.johanyabi.proyectopalitativos
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -27,6 +28,8 @@ fun NavigationApp() {
         navController = myNavController,
         startDestination = myStartDestination
     ) {
+
+        //NAVEGACIÓN LOGIN Y REGISTER
         composable("login") {
             LoginScreen(
                 onClickRegister = {
@@ -47,6 +50,8 @@ fun NavigationApp() {
                 }
             })
         }
+
+        //NAVEGACIÓN HOME
         composable("home") {
             Home2(
                 onClickLogout = {
@@ -55,33 +60,24 @@ fun NavigationApp() {
                     }
                 },
                 onClickPatients = {
-                    myNavController.navigate("pacientes") {
-                        popUpTo(0)
-                    }
+                    myNavController.navigate("pacientes")
                 },
                 onClickAddPatient = {
-                    myNavController.navigate("agregarPaciente") {
-                        popUpTo(0)
-                    }
+                    myNavController.navigate("agregarPaciente")
                 }
             )
         }
+
+        //NAVEGACIÓN PACIENTES, PANTALLAS ESCALAS, ESCANER, KARFNOSKY
         composable("pacientes") {
             ListaPacientes(
-                onClickBack = {
+                onClickAtras = {
                     myNavController.popBackStack()
                 },
                 onClickescala = {
-                    myNavController.navigate("pantallaescala") {
-                        popUpTo(0)
-                    }
+                    myNavController.navigate("pantallaescala")
                 }
             )
-        }
-        composable("agregarPaciente") {
-            AgregarPacienteScreen(onClickBack = {
-                myNavController.popBackStack()
-            })
         }
         composable("pantallaescala") {
             PantallaEscalas(
@@ -89,16 +85,65 @@ fun NavigationApp() {
                     myNavController.popBackStack()
                 },
                 onClickescaner = {
-                    myNavController.navigate("escaner") {
-                        popUpTo(0)
-                    }
+                    myNavController.navigate("escaner")
+                },
+                onClickkarfnosky = {
+                    myNavController.navigate("karfnosky")
+                },
+                onClickecog = {
+                    myNavController.navigate("ecog")
+                },
+                onClickchild = {
+                    myNavController.navigate("child")
+                },
+                onClickcalcio = {
+                    myNavController.navigate("calcio")
                 }
-                )
+            )
         }
         composable("escaner") {
-            Escanear(onClickBack = {
-                myNavController.popBackStack()
-            })
+            Escanear(
+                onClickBack = {
+                    myNavController.popBackStack()
+                }
+            )
+        }
+        composable("karfnosky"){
+            Karfnosky(
+                onClickBack = {
+                    myNavController.popBackStack()
+                }
+            )
+        }
+        composable("ecog") {
+            Ecog(
+                onClickBack = {
+                    myNavController.popBackStack()
+                }
+            )
+        }
+        composable("child") {
+            ChildPugh(
+                onClickBack = {
+                    myNavController.popBackStack()
+                }
+            )
+        }
+        composable("calcio") {
+            CalcioCorregido(
+                onClickBack = {
+                    myNavController.popBackStack()
+                }
+            )
+        }
+
+        //NAVEGACIÓN AGREGAR PACIENTE
+        composable("agregarPaciente") {
+            AgregarPacienteScreen(
+                onClickBack = {
+                    myNavController.popBackStack()
+                }
+            )
         }
     }
 }

@@ -5,77 +5,86 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Preview
 @Composable
 fun PantallaEscalas(
     onClickBack: () -> Unit = {},
-    onClickescaner: () -> Unit = {}
+    onClickescaner: () -> Unit = {},
+    onClickkarfnosky: () -> Unit = {},
+    onClickecog: () -> Unit = {},
+    onClickchild: () -> Unit = {},
+    onClickcalcio: () -> Unit = {}
 ) {
 
     val morado = Color(0xFF3F315F)
     val verde = Color(0xFF76B3AD)
 
-    // Estado para la búsqueda
-    var busqueda by remember { mutableStateOf("") }
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        // Encabezado con búsqueda
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFC8BFE7))
+    ) {
+        // Header
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        colors = listOf(morado, morado.copy(alpha = 0.9f))
-                    )
-                )
-                .padding(top = 20.dp)
-                .padding(horizontal = 16.dp, vertical = 20.dp)
+                .height(200.dp)
+                .background(Color(0xFF3A3457))
         ) {
-            //AQUI SE COLOCA EL TITULO Y EL BOTON DE BACK
-            OutlinedTextField(
-                value = busqueda,
-                onValueChange = { busqueda = it },
-                placeholder = { Text("Buscar", color = Color.Gray) },
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = null,
-                        tint = Color.Gray
-                    )
-                },
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color.White, shape = RoundedCornerShape(12.dp)),
-                shape = RoundedCornerShape(12.dp),
-            )
+                    .padding(start = 16.dp, end = 16.dp, top = 50.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(
+                    onClick = {
+                        onClickBack()
+                    }
+                ) {
+                    Icon(
+                        Icons.Default.ArrowBack,
+                        contentDescription = "Atrás",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = "Pacientes",
+                    color = Color.White,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
 
-        // Contenedor de escalas médicas
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .background(Color(0xFFE3EDF7))
-                .padding(top = 20.dp)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Fila 1: KARFNOSKY y ECOG
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = 15.dp)
                     .height(100.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -83,7 +92,9 @@ fun PantallaEscalas(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .clickable { /* Acción para KARFNOSKY */ },
+                        .clickable {
+                            onClickkarfnosky()
+                        },
                     shape = RoundedCornerShape(8.dp),
                     color = morado,
                     tonalElevation = 4.dp
@@ -105,7 +116,9 @@ fun PantallaEscalas(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .clickable { /* Acción para ECOG */ },
+                        .clickable {
+                            onClickecog()
+                        },
                     shape = RoundedCornerShape(8.dp),
                     color = morado,
                     tonalElevation = 4.dp
@@ -124,8 +137,6 @@ fun PantallaEscalas(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-
             // Fila 2: CHILD PUGH y CALCIO
             Row(
                 modifier = Modifier
@@ -137,7 +148,9 @@ fun PantallaEscalas(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .clickable { /* Acción para CHILD PUGH */ },
+                        .clickable {
+                            onClickchild()
+                        },
                     shape = RoundedCornerShape(8.dp),
                     color = verde,
                     tonalElevation = 4.dp
@@ -159,7 +172,9 @@ fun PantallaEscalas(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .clickable { /* Acción para CALCIO */ },
+                        .clickable {
+                            onClickcalcio()
+                        },
                     shape = RoundedCornerShape(8.dp),
                     color = verde,
                     tonalElevation = 4.dp
@@ -177,8 +192,6 @@ fun PantallaEscalas(
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(12.dp))
 
             // Fila 3: PAINAD y EVA
             Row(
@@ -232,9 +245,6 @@ fun PantallaEscalas(
                 }
             }
 
-
-            Spacer(modifier = Modifier.height(12.dp))
-
             // Fila 4: CKD-EPI y PPI
             Row(
                 modifier = Modifier
@@ -286,9 +296,6 @@ fun PantallaEscalas(
                     }
                 }
             }
-
-
-            Spacer(modifier = Modifier.height(12.dp))
 
             // Fila 5: PAP y ESCANER
             Row(
